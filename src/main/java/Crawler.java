@@ -74,9 +74,9 @@ public class Crawler {
 
     public void setInformation(){
         try {
-            //tid0开始，每个版块爬取前20页
+            //tid从0开始，每个版块爬取前500页
             for(int i = 0;i<200;i++){
-                for(int j = 0;j<50;j++){
+                for(int j = 0;j<500;j++){
                     List<String>jsonstr_temp = new ArrayList<String>();
                     jsonstr_temp = this.getJson(i,j);
                     Gson gson = new Gson();
