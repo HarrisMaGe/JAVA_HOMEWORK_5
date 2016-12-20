@@ -81,18 +81,22 @@ public class Crawler {
                     jsonstr_temp = this.getJson(i,j);
                     Gson gson = new Gson();
                     int length = jsonstr_temp.size();
-                    List<ContentOfJson> jsonContent = new ArrayList<ContentOfJson>();
-                    //Gson自带的映射方法，得到解析json后的数据
-                    for(int s = 0;s<length;s++) {
-                        ContentOfJson cont = gson.fromJson(jsonstr_temp.get(s), ContentOfJson.class);
-                        jsonContent.add(cont);
+                    if(length ==0){break;}//判断如果不足500页,跳出内层循环
+                    else{
+                        List<ContentOfJson> jsonContent = new ArrayList<ContentOfJson>();
+                        //Gson自带的映射方法，得到解析json后的数据
+                        for(int s = 0;s<length;s++) {
+                            ContentOfJson cont = gson.fromJson(jsonstr_temp.get(s), ContentOfJson.class);
+                            jsonContent.add(cont);
+                        }
+
+                        //将解析后的数据存入数据库
+                        for(int k =0;k<jsonContent.size();k++){
+                            openDB.insertoInformation(jsonContent.get(k).getTid(),jsonContent.get(k).getTname(),jsonContent.get(k).getAid(),jsonContent.get(k).getTitle(),jsonContent.get(k).getAuthor(),jsonContent.get(k).stat.getCoin(),jsonContent.get(k).stat.getFavorite());
+                            //System.out.printf(json_1.get(i).getAid()+"\t"+json_1.get(i).getTitle()+"\t"+json_1.get(i).getAuthor()+"\t"+json_1.get(i).stat.getCoin()+"\t"+json_1.get(i).stat.getFavorite()+"\n");
+                        }
                     }
 
-                    //将解析后的数据存入数据库
-                    for(int k =0;k<jsonContent.size();k++){
-                        openDB.insertoInformation(jsonContent.get(k).getTid(),jsonContent.get(k).getTname(),jsonContent.get(k).getAid(),jsonContent.get(k).getTitle(),jsonContent.get(k).getAuthor(),jsonContent.get(k).stat.getCoin(),jsonContent.get(k).stat.getFavorite());
-                        //System.out.printf(json_1.get(i).getAid()+"\t"+json_1.get(i).getTitle()+"\t"+json_1.get(i).getAuthor()+"\t"+json_1.get(i).stat.getCoin()+"\t"+json_1.get(i).stat.getFavorite()+"\n");
-                    }
                 }
             }
 
