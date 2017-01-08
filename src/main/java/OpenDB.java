@@ -1,4 +1,4 @@
-import java.sql.*;
+﻿import java.sql.*;
 
 /**
  * Created by MYC on 2016/12/17.
@@ -75,6 +75,9 @@ public class OpenDB {
             }
 
     }
+
+    
+
     public void close(){
         try{
             this.conn.close();

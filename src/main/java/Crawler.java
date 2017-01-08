@@ -1,4 +1,4 @@
-import com.google.gson.Gson;
+﻿import com.google.gson.Gson;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -37,36 +37,41 @@ public class Crawler {
             //System.out.println(content);
             List<String>jsonstr = new ArrayList<String>();
             int length  = content.length();
-            int begin;
-            int end;
-            //将得到的content分割，得到一系列的json数组，以String格式存入动态数组
-            begin = content.indexOf("\"aid\"");
-            for(int i = 0;i<20;i++){
-                end = content.indexOf("\"aid\"", begin + 1);
-                 if(i<9) {
-                     if (end > 0) {
-                         String str = content.substring(begin - 1, end - 6);
-                         jsonstr.add(str);
-                          begin = end;
-                      } else {
-                       break;
-                      }
-                 }else {
-                     if (end > 0) {
-                         String str = content.substring(begin - 1, end - 7);
-                         jsonstr.add(str);
-                         begin = end;
-                     } else {
-                         break;
-                     }
-                 }
-            }
+            if(length<100){
+                return null;
+            }else{
 
-            //for(int i = 0;i<jsonstr.size();i++){
-            //    System.out.println(jsonstr.get(i));
-           // }
+                int begin;
+                int end;
+                //将得到的content分割，得到一系列的json数组，以String格式存入动态数组
+                begin = content.indexOf("\"aid\"");
+                for(int i = 0;i<20;i++){
+                    end = content.indexOf("\"aid\"", begin + 1);
+                    if(i<9) {
+                        if (end > 0) {
+                            String str = content.substring(begin - 1, end - 6);
+                            jsonstr.add(str);
+                            begin = end;
+                        } else {
+                            break;
+                        }
+                    }else {
+                        if (end > 0) {
+                            String str = content.substring(begin - 1, end - 7);
+                            jsonstr.add(str);
+                            begin = end;
+                        } else {
+                            break;
+                        }
+                    }
+                }
 
-            return jsonstr;
+                //for(int i = 0;i<jsonstr.size();i++){
+                //    System.out.println(jsonstr.get(i));
+                // }
+
+                return jsonstr;}
+
         } catch (IOException E) {
             return null;
         }
@@ -74,15 +79,16 @@ public class Crawler {
 
     public void setInformation(){
         try {
-            //tid从0开始，每个版块爬取前500页
+            //tid从0开始，每个版块爬取前1000页
             for(int i = 0;i<200;i++){
-                for(int j = 0;j<500;j++){
+                for(int j = 0;j<1000;j++){
                     List<String>jsonstr_temp = new ArrayList<String>();
                     jsonstr_temp = this.getJson(i,j);
                     Gson gson = new Gson();
-                    int length = jsonstr_temp.size();
-                    if(length ==0){break;}//判断如果不足500页,跳出内层循环
+
+                    if(jsonstr_temp==null){break;}//判断如果不足1000页，或者为空,跳出内层循环
                     else{
+                        int length = jsonstr_temp.size();
                         List<ContentOfJson> jsonContent = new ArrayList<ContentOfJson>();
                         //Gson自带的映射方法，得到解析json后的数据
                         for(int s = 0;s<length;s++) {
@@ -105,7 +111,7 @@ public class Crawler {
         }
     }
 //根据板块的tid号从数据库获取数据，筛选前三名，存入二维数组，第一维存储前三名的av号，第二维存储相应的视频名称
-    public String[][] setAvnumber(int tid){
+     public String[][] setAvnumber(int tid){
 
             String info[][] = openDB.selectfromInformation(tid);
             int length = info.length;
